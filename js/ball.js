@@ -93,6 +93,17 @@ define('ball', [
             setPosition: function (pos) {
                 position = pos;
             },
+            setColor: function (pColor) {
+                color = pColor;
+            },
+            collidesWith: function (other) {
+                // usually you should check for the sum of the radii, now I wanted a collsion
+                // to only trigger if the circles overlapped at least by half
+                if (!other.position.isFartherThan(position, radius)) {
+                    return true;
+                }
+                return false;
+            },
             position: position,
             radius: radius
         };

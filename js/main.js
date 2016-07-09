@@ -26,8 +26,10 @@ requirejs([
     // var bgColor = '#fff3de';
     var bgColor = '#fffbe0';
     var color = '#80ff80';
+    var halfColor = '#c0fdb0';
     var radius = 150;
     var diff = new Vector2(0, 0);
+    var colliding = null;
     var setup = function () {
         window.addEventListener('keydown', keyDown);
         window.addEventListener('keyup', keyUp);
@@ -89,49 +91,52 @@ requirejs([
     var mouseDown = function (e) {
         var pos = new Vector2(e.x, e.y);
         e.preventDefault();
-        if (!ball.position.isFartherThan(pos, ball.radius + ball.radius)) {
-            lock = true;
-            // setDiff(ball.position.subtract(pos));
-        }
-        objMan.draw();
+        down(pos);
     };
     var mouseUp = function (e) {
         e.preventDefault();
-        lock = false;
-        // setDiff();
-        objMan.draw();
+        up();
     };
     var mouseMove = function (e) {
-        var pos;
+        var pos = new Vector2(e.x, e.y);
         e.preventDefault();
-        if (lock) {
-            pos = new Vector2(e.x, e.y);
-            moveBall(pos);
-            // moveBall(pos.subtract(diff));
-        }
-        objMan.draw();
+        move(pos);
     };
     var touchDown = function (e) {
         var pos = new Vector2(e.touches[0].clientX, e.touches[0].clientY);
         e.preventDefault();
+        down(pos);
+    };
+    var touchUp = function (e) {
+        e.preventDefault();
+        up();
+    };
+    var touchMove = function (e) {
+        var pos = new Vector2(e.touches[0].clientX, e.touches[0].clientY);
+        e.preventDefault();
+        move(pos);
+    };
+    var down = function (pos) {
         if (!ball.position.isFartherThan(pos, ball.radius + ball.radius)) {
             lock = true;
             // setDiff(ball.position.subtract(pos));
         }
         objMan.draw();
     };
-    var touchUp = function (e) {
-        e.preventDefault();
+    var up = function () {
         lock = false;
+        if (colliding) {
+            ball.setPosition(colliding.position.clone());
+        } else {
+            ball.setPosition(new Vector2(C.canvasWidth / 2, C.canvasHeight - 600));
+        }
         // setDiff();
         objMan.draw();
     };
-    var touchMove = function (e) {
-        var pos;
-        e.preventDefault();
+    var move = function (pos) {
         if (lock) {
-            pos = new Vector2(e.touches[0].clientX, e.touches[0].clientY);
             moveBall(pos);
+            checkCollision();
             // moveBall(pos.subtract(diff));
         }
         objMan.draw();
@@ -147,6 +152,21 @@ requirejs([
     };
     var moveBall = function (pos) {
         ball.setPosition(pos);
+    };
+    var checkCollision = function () {
+        var i = 0;
+        var len = 0;
+        for (i = 0, len = circles.length; i < len; ++i) {
+            if (ball.collidesWith(circles[i])) {
+                colliding = circles[i];
+                circles[i].setColor(halfColor);
+            } else {
+                if (colliding === circles[i]) {
+                    colliding = null;
+                }
+                circles[i].setColor(bgColor);
+            }
+        }
     };
 
     setup();
