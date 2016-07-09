@@ -26,6 +26,8 @@ requirejs([
     // var bgColor = '#fff3de';
     var bgColor = '#fffbe0';
     var color = '#80ff80';
+    var radius = 150;
+    var diff = new Vector2(0, 0);
     var setup = function () {
         window.addEventListener('keydown', keyDown);
         window.addEventListener('keyup', keyUp);
@@ -85,63 +87,72 @@ requirejs([
         // ballMan.keyUp(e);
     };
     var mouseDown = function (e) {
+        var pos = new Vector2(e.x, e.y);
         e.preventDefault();
-        if (!ball.position.isFartherThan(new Vector2(e.x, e.y), ball.radius + ball.radius)) {
+        if (!ball.position.isFartherThan(pos, ball.radius + ball.radius)) {
             lock = true;
+            // setDiff(ball.position.subtract(pos));
         }
-        // objMan.draw();
+        objMan.draw();
     };
     var mouseUp = function (e) {
         e.preventDefault();
         lock = false;
-        // objMan.draw();
+        // setDiff();
+        objMan.draw();
     };
     var mouseMove = function (e) {
+        var pos;
         e.preventDefault();
         if (lock) {
-            ball.position.x = e.x;
-            ball.position.y = e.y;
+            pos = new Vector2(e.x, e.y);
+            moveBall(pos);
+            // moveBall(pos.subtract(diff));
         }
-        ctx.clearRect(0, 0, C.canvasWidth, C.canvasHeight);
-        ball.draw();
-        // objMan.draw();
+        objMan.draw();
     };
     var touchDown = function (e) {
-        var x = e.touches[0].clientX;
-        var y = e.touches[0].clientY;
+        var pos = new Vector2(e.touches[0].clientX, e.touches[0].clientY);
         e.preventDefault();
-        if (!ball.position.isFartherThan(new Vector2(x, y), ball.radius + ball.radius)) {
+        if (!ball.position.isFartherThan(pos, ball.radius + ball.radius)) {
             lock = true;
+            // setDiff(ball.position.subtract(pos));
         }
-        // objMan.draw();
+        objMan.draw();
     };
     var touchUp = function (e) {
         e.preventDefault();
         lock = false;
-        // objMan.draw();
+        // setDiff();
+        objMan.draw();
     };
     var touchMove = function (e) {
-        var x = e.touches[0].clientX;
-        var y = e.touches[0].clientY;
+        var pos;
         e.preventDefault();
         if (lock) {
-            ball.position.x = x;
-            ball.position.y = y;
+            pos = new Vector2(e.touches[0].clientX, e.touches[0].clientY);
+            moveBall(pos);
+            // moveBall(pos.subtract(diff));
         }
-        ctx.clearRect(0, 0, C.canvasWidth, C.canvasHeight);
-        bg.draw();
-        rect.draw();
-        for (var i = 0; i < circles.length; ++i) {
-            circles[i].draw();
+        objMan.draw();
+    };
+    var setDiff = function (pos) {
+        if (pos) {
+            diff.x = pos.x;
+            diff.y = pos.y;
+        } else {
+            diff.x = 0;
+            diff.y = 0;
         }
-        ball.draw();
-        // objMan.draw();
+    };
+    var moveBall = function (pos) {
+        ball.setPosition(pos);
     };
 
     setup();
 
     var ball = new Ball({
-        radius: 100,
+        radius: radius,
         x: C.canvasWidth / 2,
         y: C.canvasHeight - 600,
         color: color
@@ -159,25 +170,25 @@ requirejs([
     };
     var circles = [
         new Ball({
-            radius: 100,
+            radius: radius,
             x: rect.x,
             y: rect.y + rect.height / 2,
             color: bgColor
         }),
         new Ball({
-            radius: 100,
+            radius: radius,
             x: rect.x + rect.width,
             y: rect.y + rect.height / 2,
             color: bgColor
         }),
         new Ball({
-            radius: 100,
+            radius: radius,
             x: rect.x + rect.width / 2,
             y: rect.y,
             color: bgColor
         }),
         new Ball({
-            radius: 100,
+            radius: radius,
             x: rect.x + rect.width / 2,
             y: rect.y + rect.height,
             color: bgColor
@@ -195,13 +206,13 @@ requirejs([
         }
     };
 
-    // objMan.add(ball);
+    objMan.add(bg);
+    objMan.add(rect);
+    objMan.add(circles[0]);
+    objMan.add(circles[1]);
+    objMan.add(circles[2]);
+    objMan.add(circles[3]);
+    objMan.add(ball);
 
-    bg.draw();
-    rect.draw();
-    for (var i = 0; i < circles.length; ++i) {
-        circles[i].draw();
-    }
-    ball.draw();
-
+    objMan.draw();
 });

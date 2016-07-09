@@ -90,6 +90,9 @@ define('ball', [
                     friction = null;
                 }
             },
+            setPosition: function (pos) {
+                position = pos;
+            },
             position: position,
             radius: radius
         };
