@@ -4,70 +4,65 @@ requirejs.config({
 
 requirejs([
     'lib/requestanimationframe',
-    'c',
-    'managers/objectmanager',
-    'managers/ballmanager',
-    'ball'
+    'c'
 ], function (
     requestAnimationFrame,
-    C,
-    ObjectManager,
-    BallManager,
-    Ball
+    C
 ) {
     'use strict';
 
-    var canvas = C.canvas,
-        ctx = C.ctx,
-        i = 0,
-        len = 0,
-        isRunning = false,
-        isPaused = false,
-        objMan = new ObjectManager(),
-        ballMan = new BallManager(objMan),
-        managers = [objMan, ballMan],
-        setup = function () {
-            window.addEventListener('keydown', keyDown);
-            window.addEventListener('keyup', keyUp);
-            canvas.addEventListener('mousedown', mouseDown);
-            canvas.addEventListener('mouseup', mouseUp);
-            canvas.addEventListener('mousemove', mouseMove);
-        },
-        mainLoop = function () {
-            if (!isRunning)
-                return;
+    var canvas = C.canvas;
+    var ctx = C.ctx;
+    var isRunning = false;
+    var isPaused = false;
+    // var managers = [objMan, ballMan];
+    var setup = function () {
+        window.addEventListener('keydown', keyDown);
+        window.addEventListener('keyup', keyUp);
+        canvas.addEventListener('mousedown', mouseDown);
+        canvas.addEventListener('mouseup', mouseUp);
+        canvas.addEventListener('mousemove', mouseMove);
+    };
+    var mainLoop = function () {
+        if (!isRunning) {
+            return;
+        }
+        var i = 0;
+        var len = managers.length;
 
-            if (!isPaused)
-                for (i = 0, len = managers.length; i < len; i++)
-                    managers[i].update();
-
-            objMan.draw();
-
-            requestAnimationFrame(mainLoop);
-        },
-        run = function () {
-            if (!isRunning) {
-                isRunning = true;
-                mainLoop();
+        if (!isPaused) {
+            for (i = 0, len = managers.length; i < len; i++) {
+                managers[i].update();
             }
-        },
-        keyDown = function (e) {
-            ballMan.keyDown(e);
-        },
-        keyUp = function (e) {
-            ballMan.keyUp(e);
-        },
-        mouseDown = function (e) {
-            ballMan.mouseDown(e);
-        },
-        mouseUp = function (e) {
-            ballMan.mouseUp(e);
-        },
-        mouseMove = function (e) {
-            ballMan.mouseMove(e);
-        };
+        }
+
+        objMan.draw();
+
+        requestAnimationFrame(mainLoop);
+    };
+    var run = function () {
+        if (!isRunning) {
+            isRunning = true;
+            mainLoop();
+        }
+    };
+    var keyDown = function (e) {
+        // ballMan.keyDown(e);
+    };
+    var keyUp = function (e) {
+        // ballMan.keyUp(e);
+    };
+    var mouseDown = function (e) {
+        // ballMan.mouseDown(e);
+    };
+    var mouseUp = function (e) {
+        // ballMan.mouseUp(e);
+    };
+    var mouseMove = function (e) {
+        // ballMan.mouseMove(e);
+    };
 
     setup();
 
-    run();
+    // run();
 });
