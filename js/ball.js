@@ -10,17 +10,17 @@ define('ball', [
         data = data || {};
         var canvas = C.canvas;
         var ctx = C.ctx;
-        var radius = data.radius ? data.radius : Math.floor(Math.random() * 11) + 15;
+        var radius = data.radius || Math.floor(Math.random() * 11) + 15;
         var position = new Vector2(
-            data.x ? data.x : Math.floor(Math.random() * (C.canvasWidth - radius - radius)) + radius,
-            data.y ? data.y : Math.floor(Math.random() * (C.canvasHeight - radius - radius)) + radius
+            data.x || Math.floor(Math.random() * (C.canvasWidth - radius - radius)) + radius,
+            data.y || Math.floor(Math.random() * (C.canvasHeight - radius - radius)) + radius
         );
         var oldPos = position.clone();
         var velocity = data.velocity || new Vector2(0, 0);
         var gravity;
         var friction;
         var twoPi = Math.PI + Math.PI;
-        var color = 'rgba(' +
+        var color = data.color || 'rgba(' +
             Math.floor(Math.random() * 256) + ',' +
             Math.floor(Math.random() * 256) + ',' +
             Math.floor(Math.random() * 256) + ',0.5)';
