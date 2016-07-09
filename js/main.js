@@ -4,10 +4,16 @@ requirejs.config({
 
 requirejs([
     'lib/requestanimationframe',
-    'c'
+    'c',
+    'ball',
+    'vector2',
+    'managers/objectmanager'
 ], function (
     requestAnimationFrame,
-    C
+    C,
+    Ball,
+    Vector2,
+    ObjectManager
 ) {
     'use strict';
 
@@ -15,13 +21,36 @@ requirejs([
     var ctx = C.ctx;
     var isRunning = false;
     var isPaused = false;
-    // var managers = [objMan, ballMan];
+    var lock = false;
+    var objMan = new ObjectManager();
     var setup = function () {
         window.addEventListener('keydown', keyDown);
         window.addEventListener('keyup', keyUp);
         canvas.addEventListener('mousedown', mouseDown);
         canvas.addEventListener('mouseup', mouseUp);
         canvas.addEventListener('mousemove', mouseMove);
+        canvas.addEventListener('touchstart', touchDown);
+        canvas.addEventListener('touchend', touchUp);
+        canvas.addEventListener('touchmove', touchMove);
+
+        document.body.addEventListener('touchstart', function (evt) {
+            if (evt && evt.preventDefault) {
+                evt.preventDefault();
+            }
+            if (evt && evt.stopPropagation) {
+                evt.stopPropagation();
+            }
+            return false;
+        });
+        document.body.addEventListener('touchmove', function (evt) {
+            if (evt && evt.preventDefault) {
+                evt.preventDefault();
+            }
+            if (evt && evt.stopPropagation) {
+                evt.stopPropagation();
+            }
+            return false;
+        });
     };
     var mainLoop = function () {
         if (!isRunning) {
@@ -53,16 +82,63 @@ requirejs([
         // ballMan.keyUp(e);
     };
     var mouseDown = function (e) {
-        // ballMan.mouseDown(e);
+        e.preventDefault();
+        if (!ball.position.isFartherThan(new Vector2(e.x, e.y), ball.radius + ball.radius)) {
+            lock = true;
+        }
+        // objMan.draw();
     };
     var mouseUp = function (e) {
-        // ballMan.mouseUp(e);
+        e.preventDefault();
+        lock = false;
+        // objMan.draw();
     };
     var mouseMove = function (e) {
-        // ballMan.mouseMove(e);
+        e.preventDefault();
+        if (lock) {
+            ball.position.x = e.x;
+            ball.position.y = e.y;
+        }
+        ctx.clearRect(0, 0, C.canvasWidth, C.canvasHeight);
+        ball.draw();
+        // objMan.draw();
+    };
+    var touchDown = function (e) {
+        var x = e.touches[0].clientX;
+        var y = e.touches[0].clientY;
+        e.preventDefault();
+        if (!ball.position.isFartherThan(new Vector2(x, y), ball.radius + ball.radius)) {
+            lock = true;
+        }
+        // objMan.draw();
+    };
+    var touchUp = function (e) {
+        e.preventDefault();
+        lock = false;
+        // objMan.draw();
+    };
+    var touchMove = function (e) {
+        var x = e.touches[0].clientX;
+        var y = e.touches[0].clientY;
+        e.preventDefault();
+        if (lock) {
+            ball.position.x = x;
+            ball.position.y = y;
+        }
+        ctx.clearRect(0, 0, C.canvasWidth, C.canvasHeight);
+        ball.draw();
+        // objMan.draw();
     };
 
     setup();
 
-    // run();
+    var ball = new Ball({
+        radius: 100,
+        x: 100,
+        y: 100
+    });
+
+    // objMan.add(ball);
+    ball.draw();
+
 });
