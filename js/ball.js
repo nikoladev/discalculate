@@ -11,11 +11,11 @@ define('ball', [
         var canvas = C.canvas;
         var ctx = C.ctx;
         var radius = data.radius ? data.radius : Math.floor(Math.random() * 11) + 15;
-        var pos = new Vector2(
+        var position = new Vector2(
             data.x ? data.x : Math.floor(Math.random() * (C.canvasWidth - radius - radius)) + radius,
             data.y ? data.y : Math.floor(Math.random() * (C.canvasHeight - radius - radius)) + radius
         );
-        var oldPos = pos.clone();
+        var oldPos = position.clone();
         var velocity = data.velocity || new Vector2(0, 0);
         var gravity;
         var friction;
@@ -28,16 +28,16 @@ define('ball', [
             var nx;
             var ny;
             // Reverse ball x-direction if it's heading out of screen
-            if (pos.x <= radius || pos.x >= C.canvasWidth - radius) {
+            if (position.x <= radius || position.x >= C.canvasWidth - radius) {
                 nx = velocity.mirror(true).x;
             } else {
-                nx = pos.x - oldPos.x;
+                nx = position.x - oldPos.x;
             }
             // Idem for y-direction
-            if (pos.y <= radius || pos.y >= C.canvasHeight - radius) {
+            if (position.y <= radius || position.y >= C.canvasHeight - radius) {
                 ny = velocity.mirror(false).y;
             } else {
-                ny = pos.y - oldPos.y;
+                ny = position.y - oldPos.y;
             }
 
             return new Vector2(nx, ny);
@@ -52,10 +52,10 @@ define('ball', [
                 velocity = velocity.add(gravity);
             }
 
-            oldPos = pos.clone();
-            pos = pos.add(velocity);
+            oldPos = position.clone();
+            position = position.add(velocity);
             //Prevents balls from falling through floor
-            pos = pos.clip(
+            position = position.clip(
                 radius,
                 radius, C.canvasWidth - radius - radius,
                 C.canvasHeight - radius - radius
@@ -63,7 +63,7 @@ define('ball', [
         };
         var ball = {
             init: function () {
-                pos = pos.add(velocity);
+                position = position.add(velocity);
                 this.toggleGravity();
                 this.toggleFriction();
             },
@@ -72,7 +72,7 @@ define('ball', [
             },
             draw: function () {
                 ctx.beginPath();
-                ctx.arc(pos.x, pos.y, radius, 0, twoPi);
+                ctx.arc(position.x, position.y, radius, 0, twoPi);
                 ctx.fillStyle = color;
                 ctx.fill();
             },
@@ -89,7 +89,9 @@ define('ball', [
                 } else {
                     friction = null;
                 }
-            }
+            },
+            position: position,
+            radius: radius
         };
         return ball;
     };
