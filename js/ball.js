@@ -1,7 +1,9 @@
 define('ball', [
-    'c'
+    'c',
+    'vector2'
 ], function (
-    C
+    C,
+    Vector2
 ) {
     'use strict';
     return function (data) {
