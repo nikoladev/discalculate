@@ -2,8 +2,8 @@ define('c', [], function () {
     'use strict';
     var canvas = document.getElementById('canvas'),
         ctx = canvas.getContext('2d'),
-        canvasWidth = 600,
-        canvasHeight = 600,
+        canvasWidth = window.innerWidth,
+        canvasHeight = window.innerHeight,
         gravity = false,
         friction = false;
 
