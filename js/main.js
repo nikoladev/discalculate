@@ -23,6 +23,9 @@ requirejs([
     var isPaused = false;
     var lock = false;
     var objMan = new ObjectManager();
+    // var bgColor = '#fff3de';
+    var bgColor = '#fffbe0';
+    var color = '#80ff80';
     var setup = function () {
         window.addEventListener('keydown', keyDown);
         window.addEventListener('keyup', keyUp);
@@ -126,6 +129,11 @@ requirejs([
             ball.position.y = y;
         }
         ctx.clearRect(0, 0, C.canvasWidth, C.canvasHeight);
+        bg.draw();
+        rect.draw();
+        for (var i = 0; i < circles.length; ++i) {
+            circles[i].draw();
+        }
         ball.draw();
         // objMan.draw();
     };
@@ -134,11 +142,66 @@ requirejs([
 
     var ball = new Ball({
         radius: 100,
-        x: 100,
-        y: 100
+        x: C.canvasWidth / 2,
+        y: C.canvasHeight - 600,
+        color: color
     });
+    var rect = {
+        x: C.canvasWidth / 2 - 300,
+        y: C.canvasHeight - 900,
+        width: 600,
+        height: 600,
+        color: bgColor,
+        draw: function () {
+            ctx.fillStyle = this.color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+    };
+    var circles = [
+        new Ball({
+            radius: 100,
+            x: rect.x,
+            y: rect.y + rect.height / 2,
+            color: bgColor
+        }),
+        new Ball({
+            radius: 100,
+            x: rect.x + rect.width,
+            y: rect.y + rect.height / 2,
+            color: bgColor
+        }),
+        new Ball({
+            radius: 100,
+            x: rect.x + rect.width / 2,
+            y: rect.y,
+            color: bgColor
+        }),
+        new Ball({
+            radius: 100,
+            x: rect.x + rect.width / 2,
+            y: rect.y + rect.height,
+            color: bgColor
+        })
+    ];
+    var bg = {
+        x: 0,
+        y: 0,
+        width: C.canvasWidth,
+        height: C.canvasHeight,
+        color: color,
+        draw: function () {
+            ctx.fillStyle = this.color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+    };
 
     // objMan.add(ball);
+
+    bg.draw();
+    rect.draw();
+    for (var i = 0; i < circles.length; ++i) {
+        circles[i].draw();
+    }
     ball.draw();
 
 });
