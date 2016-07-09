@@ -28,7 +28,6 @@ requirejs([
     var color = '#80ff80';
     var halfColor = '#c0fdb0';
     var radius = 150;
-    var diff = new Vector2(0, 0);
     var colliding = null;
     var setup = function () {
         window.addEventListener('keydown', keyDown);
@@ -119,7 +118,6 @@ requirejs([
     var down = function (pos) {
         if (!ball.position.isFartherThan(pos, ball.radius + ball.radius)) {
             lock = true;
-            // setDiff(ball.position.subtract(pos));
         }
         objMan.draw();
     };
@@ -130,27 +128,17 @@ requirejs([
         } else {
             ball.setPosition(new Vector2(C.canvasWidth / 2, C.canvasHeight - 600));
         }
-        // setDiff();
         objMan.draw();
     };
     var move = function (pos) {
         if (lock) {
             moveBall(pos);
             checkCollision();
-            // moveBall(pos.subtract(diff));
         }
         objMan.draw();
     };
-    var setDiff = function (pos) {
-        if (pos) {
-            diff.x = pos.x;
-            diff.y = pos.y;
-        } else {
-            diff.x = 0;
-            diff.y = 0;
-        }
-    };
     var moveBall = function (pos) {
+        clipMovement(pos);
         ball.setPosition(pos);
     };
     var checkCollision = function () {
@@ -166,6 +154,18 @@ requirejs([
                 }
                 circles[i].setColor(bgColor);
             }
+        }
+    };
+    var clipMovement = function (pos) {
+        if (pos.x - ball.radius < rect.x - ball.radius) {
+            pos.x = rect.x + ball.radius - ball.radius;
+        } else if (pos.x + ball.radius > rect.x + rect.width + ball.radius) {
+            pos.x = rect.x + rect.width - ball.radius + ball.radius;
+        }
+        if (pos.y - ball.radius < rect.y - ball.radius) {
+            pos.y = rect.y + ball.radius - ball.radius;
+        } else if (pos.y + ball.radius > rect.y + rect.height + ball.radius) {
+            pos.y = rect.y + rect.height - ball.radius + ball.radius;
         }
     };
 
