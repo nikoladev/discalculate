@@ -19,6 +19,13 @@ define('ball', [
         var velocity = data.velocity || new Vector2(0, 0);
         var gravity;
         var friction;
+        var text = data.text || {
+            string: '',
+            font: '32 px sans-serif',
+            baseline: 'bottom',
+            align: 'left',
+            color: '#9a9a9a'
+        };
         var twoPi = Math.PI + Math.PI;
         var color = data.color || 'rgba(' +
             Math.floor(Math.random() * 256) + ',' +
@@ -75,6 +82,11 @@ define('ball', [
                 ctx.arc(position.x, position.y, radius, 0, twoPi);
                 ctx.fillStyle = color;
                 ctx.fill();
+                ctx.fillStyle = text.color;
+                ctx.font = text.font;
+                ctx.textBaseline = text.baseline;
+                ctx.textAlign = text.align;
+                ctx.fillText(text.string, position.x, position.y);
             },
             toggleGravity: function () {
                 if (C.gravity) {
@@ -103,6 +115,9 @@ define('ball', [
                     return true;
                 }
                 return false;
+            },
+            setTextString: function (str) {
+                text.text = str;
             },
             position: position,
             radius: radius

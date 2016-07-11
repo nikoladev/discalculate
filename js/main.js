@@ -1,3 +1,10 @@
+/**
+ * TODO:
+ * - Don't use absolute numbers for size and coordinates. Use relative numbers
+ * that are calculated at the start (and on resize/orientationchange?)
+ * -
+ */
+
 requirejs.config({
     baseUrl: 'js'
 });
@@ -7,13 +14,15 @@ requirejs([
     'c',
     'ball',
     'vector2',
-    'managers/objectmanager'
+    'managers/objectmanager',
+    'text'
 ], function (
     requestAnimationFrame,
     C,
     Ball,
     Vector2,
-    ObjectManager
+    ObjectManager,
+    Text
 ) {
     'use strict';
 
@@ -23,12 +32,14 @@ requirejs([
     var isPaused = false;
     var lock = false;
     var objMan = new ObjectManager();
-    // var bgColor = '#fff3de';
     var bgColor = '#fffbe0';
     var color = '#80ff80';
     var halfColor = '#c0fdb0';
     var radius = 150;
     var colliding = null;
+    var number = 3;
+    var result = 0;
+    var goal = 4;
     var setup = function () {
         window.addEventListener('keydown', keyDown);
         window.addEventListener('keyup', keyUp);
@@ -125,6 +136,15 @@ requirejs([
         lock = false;
         if (colliding) {
             ball.setPosition(colliding.position.clone());
+            if (colliding === circles[0]) {
+                result /= number;
+            } else if (colliding === circles[1]) {
+                result *= number;
+            } else if (colliding === circles[2]) {
+                result += number;
+            } else if (colliding === circles[3]) {
+                result -= number;
+            }
         } else {
             ball.setPosition(new Vector2(C.canvasWidth / 2, C.canvasHeight - 600));
         }
@@ -175,7 +195,14 @@ requirejs([
         radius: radius,
         x: C.canvasWidth / 2,
         y: C.canvasHeight - 600,
-        color: color
+        color: color,
+        text: {
+            string: '' + number,
+            font: '200px sans-serif',
+            baseline: 'middle',
+            align: 'center',
+            color: bgColor
+        }
     });
     var rect = {
         x: C.canvasWidth / 2 - 300,
@@ -193,25 +220,53 @@ requirejs([
             radius: radius,
             x: rect.x,
             y: rect.y + rect.height / 2,
-            color: bgColor
+            color: bgColor,
+            text: {
+                string: '÷',
+                font: '100px sans-serif',
+                baseline: 'middle',
+                align: 'center',
+                color: '#9a9a9a'
+            }
         }),
         new Ball({
             radius: radius,
             x: rect.x + rect.width,
             y: rect.y + rect.height / 2,
-            color: bgColor
+            color: bgColor,
+            text: {
+                string: '×',
+                font: '100px sans-serif',
+                baseline: 'middle',
+                align: 'center',
+                color: '#9a9a9a'
+            }
         }),
         new Ball({
             radius: radius,
             x: rect.x + rect.width / 2,
             y: rect.y,
-            color: bgColor
+            color: bgColor,
+            text: {
+                string: '+',
+                font: '100px sans-serif',
+                baseline: 'middle',
+                align: 'center',
+                color: '#9a9a9a'
+            }
         }),
         new Ball({
             radius: radius,
             x: rect.x + rect.width / 2,
             y: rect.y + rect.height,
-            color: bgColor
+            color: bgColor,
+            text: {
+                string: '-',
+                font: '100px sans-serif',
+                baseline: 'middle',
+                align: 'center',
+                color: '#9a9a9a'
+            }
         })
     ];
     var bg = {
@@ -233,6 +288,15 @@ requirejs([
     objMan.add(circles[2]);
     objMan.add(circles[3]);
     objMan.add(ball);
+    objMan.add({
+        draw: function () {
+            ctx.fillStyle = bgColor;
+            ctx.font = '200px sans-serif';
+            ctx.textBaseline = 'middle';
+            ctx.textAlign = 'left';
+            ctx.fillText('' + result, 200, 200);
+        }
+    });
 
     objMan.draw();
 });
